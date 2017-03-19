@@ -1,5 +1,6 @@
 #include <iostream>
 #include <sstream>
+#include <vector>
 
 using namespace std;
 
@@ -10,19 +11,16 @@ class Employee
     {
       name = "";
       pay = 0;
-      cout << "Employee default constructor" << endl;
     }
 
     Employee(string empName, double empPay)
     {
       name = empName;
       pay = empPay;
-      cout << "Employee explicit constructor" << endl;
     }
 
     ~Employee()
     {
-      cout << "Employee destructor" << endl;
     }
 
     string getName() { return name; }
@@ -33,7 +31,7 @@ class Employee
 
     double grossPay(int hours) { return pay * hours; }
 
-    string toString()
+    string virtual toString()
     {
       stringstream stm;
       stm << name << ": " << pay;
@@ -51,18 +49,15 @@ class Manager : public Employee
     Manager()
       : salaried(true)
     {
-      cout << "manager default constructor" << endl;
     }
     Manager(string empName, double  empPay, bool isSalaried) 
       : Employee {empName, empPay}
     {
-      cout << "manager explicit contructor" << endl;
       salaried = isSalaried;
     }
 
     ~Manager()
     {
-      cout << "Manager destructor" << endl;
     }
 
     bool getSalaried () { return salaried; }
@@ -77,7 +72,7 @@ class Manager : public Employee
       }
     }
 
-    string toString () 
+    string virtual toString () override
     {
       stringstream stm;
       string sal = salaried ? "salaried" : "hourly";
@@ -88,13 +83,36 @@ class Manager : public Employee
     bool salaried;
 };
 
+void smart(vector<Employee*> emps)
+{
+  for (auto emp : emps) {
+    cout << emp->toString() << endl;
+  }
+}
+
 int main ()
 {
-  //Employee emp("joshua", 99);
+  auto e1 = new Employee("e1", 1);
+  auto e2 = new Manager("e2", 2, false);
   
-  Manager man;
+  vector<Employee*> emps;
 
-  cout << man.toString() << endl;
+  emps.push_back(e1);
+  emps.push_back(e2);
+
+  smart(emps); 
+
+  vector<Employee> emps2;
+
+  Employee e3("e3", 3);
+  Manager e4("e4", 4, true);
+
+  emps2.push_back(e3);
+  emps2.push_back(e4);
+
+  for (unsigned long i = 0; i < emps2.size(); i++) {
+    cout << emps2[i].toString() << endl;
+  }
 
   return 0;
 }
